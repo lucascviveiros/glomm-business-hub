@@ -62,9 +62,79 @@
     margin:0 auto;
     min-height:100vh;
   }
+
+  /* ---- Mobile top bar + drawer nav ---- */
+  .nav-toggle-input{position:absolute;opacity:0;pointer-events:none;}
+  .mobile-bar{display:none;}
+  .drawer-backdrop{display:none;}
+
   @media (max-width:880px){
     .shell{grid-template-columns:1fr;}
-    nav.toc{display:none;}
+
+    .mobile-bar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:.75rem;
+      padding:.9rem 1.1rem;
+      position:sticky;
+      top:0;
+      z-index:30;
+      background:var(--bg);
+      border-bottom:1px solid var(--line);
+    }
+    .mobile-bar .brand{margin-bottom:0;}
+    .mobile-bar .brand-name{font-size:1.02rem;}
+    .menu-btn{
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      gap:4px;
+      width:34px;height:34px;
+      border-radius:9px;
+      border:1px solid var(--line-strong);
+      background:var(--paper);
+      cursor:pointer;
+      flex:none;
+    }
+    .menu-btn span{
+      display:block;height:2px;margin:0 7px;
+      background:var(--ink);
+      border-radius:1px;
+      transition:transform .18s ease, opacity .18s ease;
+    }
+
+    nav.toc{
+      display:block;
+      position:fixed;
+      top:0;left:0;
+      height:100vh;
+      width:min(78vw,300px);
+      background:var(--bg);
+      border-right:1px solid var(--line);
+      padding:1.4rem 1.4rem 2rem;
+      transform:translateX(-100%);
+      transition:transform .22s ease;
+      z-index:50;
+      overflow-y:auto;
+    }
+    .drawer-backdrop{
+      display:block;
+      position:fixed;inset:0;
+      background:rgba(8,18,17,.45);
+      opacity:0;pointer-events:none;
+      transition:opacity .2s ease;
+      z-index:40;
+    }
+    .nav-toggle-input:checked ~ .shell nav.toc{transform:translateX(0);}
+    .nav-toggle-input:checked ~ .shell .drawer-backdrop{opacity:1;pointer-events:auto;}
+    .nav-toggle-input:checked ~ .shell .menu-btn span:nth-child(1){transform:translateY(6px) rotate(45deg);}
+    .nav-toggle-input:checked ~ .shell .menu-btn span:nth-child(2){opacity:0;}
+    .nav-toggle-input:checked ~ .shell .menu-btn span:nth-child(3){transform:translateY(-6px) rotate(-45deg);}
+  }
+
+  @media (max-width:480px){
+    nav.toc{width:82vw;}
   }
 
   /* ---- Sidebar ---- */
@@ -380,7 +450,20 @@
   }
 </style>
 
+<input type="checkbox" id="nav-toggle" class="nav-toggle-input" aria-hidden="true">
+
 <div class="shell">
+  <div class="mobile-bar">
+    <div class="brand">
+      <div class="brand-mark">G</div>
+      <div class="brand-name">Glomm</div>
+    </div>
+    <label class="menu-btn" for="nav-toggle" aria-label="Abrir sumário" role="button" tabindex="0">
+      <span></span><span></span><span></span>
+    </label>
+  </div>
+  <label class="drawer-backdrop" for="nav-toggle" aria-hidden="true"></label>
+
   <nav class="toc" aria-label="Sumário">
     <div class="brand">
       <div class="brand-mark">G</div>
@@ -560,3 +643,12 @@
     </footer>
   </main>
 </div>
+
+<script>
+  document.querySelectorAll('nav.toc a').forEach(function(link){
+    link.addEventListener('click', function(){
+      var toggle = document.getElementById('nav-toggle');
+      if (toggle) toggle.checked = false;
+    });
+  });
+</script>
