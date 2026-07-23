@@ -1,0 +1,562 @@
+<title>Glomm — Business Plan</title>
+<style>
+  :root{
+    --bg:#F2F6F5;
+    --paper:#FFFFFF;
+    --ink:#10262B;
+    --ink-soft:#42615E;
+    --accent:#0E7C7B;
+    --accent-ink:#083C3B;
+    --gold:#C9832A;
+    --gold-soft:#F3E3C8;
+    --line:#D6E2E0;
+    --line-strong:#B9CBC8;
+    --radius:14px;
+    --serif: "Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    --sans: -apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono: ui-monospace,"SF Mono",Consolas,monospace;
+  }
+  :root[data-theme="dark"]{
+    --bg:#0B1817;
+    --paper:#11201F;
+    --ink:#E9F2F0;
+    --ink-soft:#9FBAB6;
+    --accent:#4BD3C4;
+    --accent-ink:#CFF6EF;
+    --gold:#E7AE5C;
+    --gold-soft:#3A2C17;
+    --line:#1F3735;
+    --line-strong:#2A4744;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0B1817;
+      --paper:#11201F;
+      --ink:#E9F2F0;
+      --ink-soft:#9FBAB6;
+      --accent:#4BD3C4;
+      --accent-ink:#CFF6EF;
+      --gold:#E7AE5C;
+      --gold-soft:#3A2C17;
+      --line:#1F3735;
+      --line-strong:#2A4744;
+    }
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--sans);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--accent-ink);}
+  ::selection{background:var(--gold-soft);color:var(--ink);}
+
+  .shell{
+    display:grid;
+    grid-template-columns:260px minmax(0,1fr);
+    gap:0;
+    max-width:1180px;
+    margin:0 auto;
+    min-height:100vh;
+  }
+  @media (max-width:880px){
+    .shell{grid-template-columns:1fr;}
+    nav.toc{display:none;}
+  }
+
+  /* ---- Sidebar ---- */
+  nav.toc{
+    position:sticky;
+    top:0;
+    align-self:start;
+    height:100vh;
+    overflow-y:auto;
+    padding:2.5rem 1.5rem 2rem 0;
+    border-right:1px solid var(--line);
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:.6rem;
+    margin-bottom:.35rem;
+  }
+  .brand-mark{
+    width:30px;height:30px;border-radius:9px;
+    background:linear-gradient(160deg,var(--accent),var(--accent-ink));
+    display:flex;align-items:center;justify-content:center;
+    color:var(--paper);font-family:var(--serif);font-weight:700;font-size:.95rem;
+    flex:none;
+  }
+  .brand-name{
+    font-family:var(--serif);
+    font-weight:700;
+    font-size:1.15rem;
+    letter-spacing:.01em;
+  }
+  .brand-sub{
+    font-size:.72rem;
+    color:var(--ink-soft);
+    text-transform:uppercase;
+    letter-spacing:.09em;
+    margin:0 0 1.75rem;
+  }
+  .toc-status{
+    display:inline-flex;align-items:center;gap:.4rem;
+    font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;
+    color:var(--gold);
+    background:var(--gold-soft);
+    border-radius:999px;
+    padding:.3rem .65rem;
+    margin-bottom:1.6rem;
+  }
+  .toc-status::before{
+    content:"";width:6px;height:6px;border-radius:50%;
+    background:var(--gold);
+  }
+  .toc-list{
+    list-style:none;margin:0;padding:0;
+    font-size:.86rem;
+  }
+  .toc-list a{
+    display:block;
+    padding:.4rem 0;
+    color:var(--ink-soft);
+    text-decoration:none;
+    border-left:2px solid transparent;
+    padding-left:.75rem;
+    margin-left:-.75rem;
+    transition:color .15s ease, border-color .15s ease;
+  }
+  .toc-list a:hover{color:var(--ink);border-color:var(--line-strong);}
+  .toc-list .num{
+    font-family:var(--mono);
+    font-size:.72rem;
+    color:var(--ink-soft);
+    margin-right:.5rem;
+  }
+  .toc-foot{
+    margin-top:2rem;
+    padding-top:1.25rem;
+    border-top:1px solid var(--line);
+    font-size:.76rem;
+    color:var(--ink-soft);
+  }
+
+  /* ---- Main column ---- */
+  main{
+    padding:3.5rem 3rem 6rem;
+    max-width:760px;
+  }
+  @media (max-width:880px){
+    main{padding:2.25rem 1.4rem 4rem;}
+  }
+
+  header.hero{
+    margin-bottom:3rem;
+  }
+  .eyebrow{
+    font-size:.75rem;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    color:var(--accent-ink);
+    font-weight:600;
+    margin:0 0 .9rem;
+  }
+  h1.title{
+    font-family:var(--serif);
+    font-weight:700;
+    font-size:clamp(2.1rem,4vw,2.9rem);
+    line-height:1.08;
+    margin:0 0 .9rem;
+    text-wrap:balance;
+    letter-spacing:-.01em;
+  }
+  .thesis{
+    font-size:1.08rem;
+    color:var(--ink-soft);
+    max-width:60ch;
+    margin:0;
+  }
+
+  section{
+    margin-bottom:3.4rem;
+    scroll-margin-top:2rem;
+  }
+  h2{
+    font-family:var(--serif);
+    font-size:1.55rem;
+    font-weight:700;
+    margin:0 0 .3rem;
+    display:flex;
+    align-items:baseline;
+    gap:.6rem;
+  }
+  h2 .idx{
+    font-family:var(--mono);
+    font-size:.85rem;
+    color:var(--accent-ink);
+    font-weight:600;
+  }
+  .section-lede{
+    color:var(--ink-soft);
+    font-size:.95rem;
+    margin:0 0 1.3rem;
+    max-width:62ch;
+  }
+  p{max-width:66ch;}
+  p.body{font-size:1rem;}
+  strong{color:var(--ink);}
+
+  .pullquote{
+    font-family:var(--serif);
+    font-size:1.28rem;
+    line-height:1.45;
+    color:var(--ink);
+    border-left:3px solid var(--accent);
+    padding:.2rem 0 .2rem 1.3rem;
+    margin:1.6rem 0;
+    max-width:58ch;
+  }
+
+  /* feature table */
+  .feature-grid{
+    display:grid;
+    gap:.7rem;
+    margin:1.4rem 0;
+  }
+  .feature-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:1rem;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:1rem 1.2rem;
+  }
+  @media (max-width:640px){
+    .feature-row{grid-template-columns:1fr;}
+  }
+  .feature-row .k{
+    font-weight:600;
+    font-size:.92rem;
+  }
+  .feature-row .v{
+    font-size:.88rem;
+    color:var(--ink-soft);
+  }
+  .feature-row .v::before{
+    content:"→ ";
+    color:var(--accent);
+  }
+
+  /* GlommCards mock */
+  .cards-demo{
+    display:flex;
+    align-items:center;
+    gap:2rem;
+    flex-wrap:wrap;
+    margin:1.8rem 0 1rem;
+    padding:1.6rem;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+  }
+  .card-stack{
+    position:relative;
+    width:150px;
+    height:200px;
+    flex:none;
+  }
+  .swipe-card{
+    position:absolute;
+    inset:0;
+    border-radius:16px;
+    background:linear-gradient(155deg,var(--accent) 0%,var(--accent-ink) 100%);
+    box-shadow:0 10px 24px -12px rgba(0,0,0,.35);
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    padding:.7rem;
+    color:#fff;
+  }
+  .swipe-card:nth-child(1){transform:rotate(-6deg) translate(-8px,4px);opacity:.55;}
+  .swipe-card:nth-child(2){transform:rotate(4deg) translate(6px,2px);opacity:.75;}
+  .swipe-card:nth-child(3){transform:none;z-index:2;}
+  .swipe-card .biz{font-family:var(--serif);font-weight:700;font-size:.95rem;}
+  .swipe-card .dist{font-size:.68rem;opacity:.85;}
+  .cards-legend{font-size:.86rem;color:var(--ink-soft);flex:1;min-width:220px;}
+  .cards-legend .radius-track{
+    display:flex;align-items:center;gap:.4rem;margin-top:.9rem;font-family:var(--mono);font-size:.75rem;
+  }
+  .radius-track span.stop{
+    padding:.15rem .5rem;border-radius:999px;background:var(--bg);border:1px solid var(--line-strong);
+  }
+  .radius-track .arrow{color:var(--ink-soft);}
+
+  /* competitive table */
+  .table-wrap{overflow-x:auto;margin:1.4rem 0;}
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:.88rem;
+    min-width:560px;
+  }
+  th,td{
+    text-align:left;
+    padding:.7rem .9rem;
+    border-bottom:1px solid var(--line);
+    vertical-align:top;
+  }
+  th{
+    font-size:.72rem;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    color:var(--ink-soft);
+    font-weight:600;
+    border-bottom:1px solid var(--line-strong);
+  }
+  td.ref{font-weight:600;font-family:var(--serif);}
+  tbody tr:last-child td{border-bottom:none;}
+
+  /* roadmap timeline */
+  .timeline{
+    list-style:none;margin:1.4rem 0 0;padding:0;
+    border-left:2px solid var(--line-strong);
+  }
+  .timeline li{
+    position:relative;
+    padding:0 0 1.6rem 1.6rem;
+  }
+  .timeline li::before{
+    content:"";
+    position:absolute;left:-6.5px;top:.25rem;
+    width:11px;height:11px;border-radius:50%;
+    background:var(--paper);
+    border:2px solid var(--line-strong);
+  }
+  .timeline li.is-live::before{border-color:var(--accent);background:var(--accent);}
+  .timeline li.is-plan::before{border-color:var(--gold);background:var(--paper);}
+  .phase-head{display:flex;align-items:center;gap:.6rem;margin-bottom:.25rem;flex-wrap:wrap;}
+  .phase-name{font-weight:700;font-size:.98rem;}
+  .pill{
+    font-size:.66rem;text-transform:uppercase;letter-spacing:.07em;
+    padding:.18rem .55rem;border-radius:999px;font-weight:600;
+  }
+  .pill.live{background:var(--gold-soft);color:var(--gold);}
+  .pill.next{background:var(--line);color:var(--ink-soft);}
+  .pill.plan{background:transparent;border:1px dashed var(--line-strong);color:var(--ink-soft);}
+  .phase-desc{font-size:.9rem;color:var(--ink-soft);max-width:56ch;}
+
+  .open-list{
+    list-style:none;margin:1.2rem 0 0;padding:0;
+    display:grid;gap:.65rem;
+  }
+  .open-list li{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-left:3px solid var(--gold);
+    border-radius:10px;
+    padding:.8rem 1rem;
+    font-size:.9rem;
+  }
+
+  footer.doc-footer{
+    margin-top:4rem;
+    padding-top:1.6rem;
+    border-top:1px solid var(--line);
+    font-size:.82rem;
+    color:var(--ink-soft);
+    display:flex;
+    justify-content:space-between;
+    gap:1rem;
+    flex-wrap:wrap;
+  }
+
+  @media (prefers-reduced-motion: no-preference){
+    .toc-list a{transition:color .15s ease, border-color .15s ease;}
+  }
+</style>
+
+<div class="shell">
+  <nav class="toc" aria-label="Sumário">
+    <div class="brand">
+      <div class="brand-mark">G</div>
+      <div class="brand-name">Glomm</div>
+    </div>
+    <p class="brand-sub">Business &amp; Product Hub</p>
+    <div class="toc-status">Rascunho vivo</div>
+    <ul class="toc-list">
+      <li><a href="#resumo"><span class="num">01</span>Resumo executivo</a></li>
+      <li><a href="#problema"><span class="num">02</span>Problema</a></li>
+      <li><a href="#solucao"><span class="num">03</span>Solução</a></li>
+      <li><a href="#glommcards"><span class="num">—</span>GlommCards</a></li>
+      <li><a href="#modelo"><span class="num">04</span>Modelo de negócio</a></li>
+      <li><a href="#mercado"><span class="num">05</span>Mercado</a></li>
+      <li><a href="#competicao"><span class="num">06</span>Cenário competitivo</a></li>
+      <li><a href="#roadmap"><span class="num">07</span>Roadmap</a></li>
+      <li><a href="#aberto"><span class="num">08</span>Em aberto</a></li>
+    </ul>
+    <div class="toc-foot">
+      Este hub reúne cada rascunho de negócio e produto do Glomm conforme evoluem. Nada aqui é final.
+    </div>
+  </nav>
+
+  <main>
+    <header class="hero">
+      <p class="eyebrow">Business Plan · Pre-seed</p>
+      <h1 class="title">Menos opções, decisões melhores.</h1>
+      <p class="thesis">Glomm é a camada de descoberta de negócios locais que reduz a busca a poucas decisões — e o plano para transformá-la na camada de transação que o Google Maps nunca vai construir.</p>
+    </header>
+
+    <section id="resumo">
+      <h2><span class="idx">01</span>Resumo executivo</h2>
+      <p class="body">Glomm é um app de descoberta de negócios locais por categoria e raio, com UI orientada a decisão rápida — cor e ícone por categoria, slider <em>Best Rated ↔ Best Value</em>, modo "Aberto agora". O produto já resolve <strong>descoberta</strong> melhor que o Google Maps porque parte de intenção de compra, não de busca textual: o Maps te mostra o mundo, o Glomm te mostra uma decisão.</p>
+
+      <p class="body">A tese de investimento: transformar essa camada de descoberta em uma <strong>camada de transação</strong>, cadastrando negócios locais para vender produtos e serviços dentro do app — a fusão entre iFood (transação) e Google Maps (descoberta geoespacial) que hoje não existe como produto único.</p>
+
+      <p class="pullquote">O Google Maps resolve descoberta com excesso — dezenas de opções simultâneas, decisão jogada para o usuário vasculhar. O Glomm resolve o mesmo problema de forma singular: poucas opções por vez, no limite três recomendações.</p>
+
+      <p class="body"><strong>Visão de mercado:</strong> global. <strong>Estratégia de execução:</strong> hiperlocal — nenhum dos cases de referência (iFood, Zomato, Meituan, Yelp, Nextdoor) escalou sem antes provar densidade de oferta numa única cidade ou bairro. "Global" é o TAM e a ambição de produto; o go-to-market é sequencial, cidade por cidade.</p>
+    </section>
+
+    <section id="problema">
+      <h2><span class="idx">02</span>Problema</h2>
+      <ul>
+        <li>Google Maps resolve "onde fica", não "o que eu quero agora dado meu critério" — preço vs. nota, aberto agora, categoria certa.</li>
+        <li>Marketplaces verticais como iFood resolvem transação só para uma categoria (comida) — o consumidor usa apps fragmentados por tipo de negócio.</li>
+        <li>Negócios locais fora do delivery de comida (serviços, saúde, lazer, hospedagem) não têm camada de e-commerce ou agendamento integrada à descoberta.</li>
+      </ul>
+    </section>
+
+    <section id="solucao">
+      <h2><span class="idx">03</span>Solução — o que o produto já prova</h2>
+      <p class="section-lede">Elementos já implementados na UI atual e o problema que cada um resolve.</p>
+      <div class="feature-grid">
+        <div class="feature-row">
+          <div class="k">Categorias curadas com ícone + cor</div>
+          <div class="v">Decisão por reconhecimento visual em menos de 1s, sem busca textual</div>
+        </div>
+        <div class="feature-row">
+          <div class="k">Discovery Mode — slider Best Rated ↔ Best Value</div>
+          <div class="v">Modela um trade-off de decisão que o Maps não modela</div>
+        </div>
+        <div class="feature-row">
+          <div class="k">Toggle "Aberto agora" + busca por região</div>
+          <div class="v">Filtra por disponibilidade real, não só existência no mapa</div>
+        </div>
+        <div class="feature-row">
+          <div class="k">Chips de refinamento + badge PRO</div>
+          <div class="v">Navegação já preparada para camadas pagas</div>
+        </div>
+      </div>
+      <p class="body">Próximo passo de produto — ainda não construído: cadastro de negócio local, com catálogo de produtos e serviços, pedidos ou reservas dentro do app, e gestão de presença pelo lojista.</p>
+    </section>
+
+    <section id="glommcards">
+      <h2><span class="idx">—</span>GlommCards <span class="pill plan">Plano de produto</span></h2>
+      <p class="section-lede">A curadoria do Discovery Mode levada ao extremo: descoberta gamificada, estilo swipe.</p>
+      <p class="body">O usuário aciona um botão e recebe <strong>3 negócios locais em formato de card</strong>, no estilo Tinder — like ou dislike em cada um. A busca começa num raio de 3km e expande progressivamente até 10km conforme o usuário continua avaliando. Cada swipe é ao mesmo tempo entretenimento e dado de preferência sobre o negócio — review implícito, em vez do formulário de nota tradicional que Yelp e Maps usam.</p>
+
+      <div class="cards-demo">
+        <div class="card-stack">
+          <div class="swipe-card"></div>
+          <div class="swipe-card"></div>
+          <div class="swipe-card">
+            <div class="biz">Café da Vila</div>
+            <div class="dist">1.2 km · Alimentação</div>
+          </div>
+        </div>
+        <div class="cards-legend">
+          3 recomendações por rodada. Like ou dislike em cada card.
+          <div class="radius-track">
+            <span class="stop">3 km</span><span class="arrow">→</span><span class="stop">6 km</span><span class="arrow">→</span><span class="stop">10 km</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="modelo">
+      <h2><span class="idx">04</span>Modelo de negócio</h2>
+      <p class="section-lede">Híbrido — validado por Zomato e Meituan.</p>
+      <ol>
+        <li><strong>Usuário final — assinatura PRO:</strong> filtros avançados de descoberta, sem anúncios, recursos expandidos do Discovery Mode.</li>
+        <li><strong>Negócio local — comissão / assinatura:</strong> comissão por transação (pedido ou reserva) + planos de destaque na busca por categoria/raio + catálogo digital.</li>
+        <li><strong>Ads locais</strong> (fase 2, modelo Yelp): destaque pago sem depender de transação, para categorias onde comissão não se aplica bem — saúde, serviços profissionais.</li>
+      </ol>
+      <p class="body">Racional: comissão sozinha (iFood puro) limita a categorias transacionáveis; assinatura de usuário sozinha (Foursquare) historicamente não sustentou o negócio. O híbrido cobre as duas pontas antes de qualquer uma precisar carregar o negócio inteiro.</p>
+    </section>
+
+    <section id="mercado">
+      <h2><span class="idx">05</span>Mercado — visão global, execução hiperlocal</h2>
+      <ul>
+        <li><strong>TAM:</strong> interseção global entre local search e local commerce — ambição declarada do produto.</li>
+        <li><strong>Wedge de lançamento:</strong> uma cidade piloto, escolhida por densidade mínima de negócios cadastráveis por categoria e baixa fricção de aquisição de lojista.</li>
+        <li><strong>Gate de expansão:</strong> só abrir nova cidade quando a piloto atingir massa crítica de oferta — mesmo gate usado por iFood e Nextdoor antes de expandir.</li>
+      </ul>
+    </section>
+
+    <section id="competicao">
+      <h2><span class="idx">06</span>Cenário competitivo</h2>
+      <p class="section-lede">Research via skill <code>app-store-optimization</code> sobre 5 cases que já validaram partes deste modelo.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Referência</th><th>O que validou</th><th>Risco que evita</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="ref">iFood</td><td>Comissão + densidade hiperlocal</td><td>Não lançar sem massa crítica de oferta</td></tr>
+            <tr><td class="ref">Yelp</td><td>Ads de negócio sustenta sem cobrar usuário</td><td>Ter um segundo motor de receita fora da comissão</td></tr>
+            <tr><td class="ref">Foursquare / Swarm</td><td>Descoberta pura sem transação não monetiza</td><td>Não adiar a camada de cadastro de negócio</td></tr>
+            <tr><td class="ref">Nextdoor</td><td>Densidade pode ser bairro, não só cidade</td><td>Flexibilidade na unidade geográfica do piloto</td></tr>
+            <tr><td class="ref">Zomato / Meituan</td><td>Híbrido (assinatura + comissão + ads) escala</td><td>Modelo de referência direto para o Glomm</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="body">Nenhum concorrente combina descoberta multi-categoria + transação + UI de decisão rápida por cor e critério no mesmo produto — esse é o espaço em branco.</p>
+    </section>
+
+    <section id="roadmap">
+      <h2><span class="idx">07</span>Roadmap de produto</h2>
+      <ul class="timeline">
+        <li class="is-live">
+          <div class="phase-head"><span class="phase-name">Fase 1 — Descoberta</span><span class="pill live">Atual</span></div>
+          <p class="phase-desc">Descoberta por categoria/raio, Discovery Mode, filtros. Validar retenção e uso do app sem transação.</p>
+        </li>
+        <li>
+          <div class="phase-head"><span class="phase-name">Fase 2 — Cadastro de negócio</span><span class="pill next">Próxima</span></div>
+          <p class="phase-desc">Perfil, catálogo, horário de funcionamento. Sem checkout ainda — só presença.</p>
+        </li>
+        <li>
+          <div class="phase-head"><span class="phase-name">Fase 3 — Transação</span></div>
+          <p class="phase-desc">Pedido ou reserva dentro do app, com comissão. Início da monetização híbrida.</p>
+        </li>
+        <li>
+          <div class="phase-head"><span class="phase-name">Fase 4 — PRO &amp; Ads</span></div>
+          <p class="phase-desc">Assinatura PRO de usuário e ads locais — segunda e terceira camada de receita.</p>
+        </li>
+        <li class="is-plan">
+          <div class="phase-head"><span class="phase-name">Fase 5 — GlommCards</span><span class="pill plan">Plano</span></div>
+          <p class="phase-desc">Descoberta gamificada estilo swipe, 3 recomendações por vez, raio expansível de 3km a 10km. Gera dado de preferência implícito sobre os negócios locais.</p>
+        </li>
+      </ul>
+    </section>
+
+    <section id="aberto">
+      <h2><span class="idx">08</span>Em aberto</h2>
+      <p class="section-lede">Próximas decisões — não travam o plano, mas precisam de resposta antes da versão pitch-ready.</p>
+      <ul class="open-list">
+        <li>Cidade ou bairro piloto, e critério objetivo de "massa crítica" para liberar expansão.</li>
+        <li>Categoria de negócio prioritária para a primeira leva de cadastro — qual tem menor fricção de onboarding.</li>
+        <li>Estrutura de captação: valuation, tamanho da rodada, uso de capital.</li>
+      </ul>
+    </section>
+
+    <footer class="doc-footer">
+      <span>Glomm — Business &amp; Product Hub</span>
+      <span>Atualizado conforme a conversa evolui · versão rascunho</span>
+    </footer>
+  </main>
+</div>
