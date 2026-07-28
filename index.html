@@ -448,6 +448,38 @@
   @media (prefers-reduced-motion: no-preference){
     .toc-list a{transition:color .15s ease, border-color .15s ease;}
   }
+
+  /* ---- Page pager (added) ---- */
+  .pager{
+    display:flex;gap:.7rem;flex-wrap:wrap;
+    margin:0 0 2.2rem;
+  }
+  .pager a{
+    display:inline-flex;align-items:center;gap:.5rem;
+    padding:.55rem 1.05rem;
+    border-radius:999px;
+    border:1px solid var(--line-strong);
+    background:var(--paper);
+    color:var(--ink);
+    font-size:.84rem;
+    font-weight:600;
+    text-decoration:none;
+    transition:border-color .15s ease, color .15s ease, background .15s ease;
+  }
+  .pager a .n{
+    font-family:var(--mono);
+    font-size:.72rem;
+    color:var(--ink-soft);
+  }
+  .pager a:hover{border-color:var(--accent);color:var(--accent-ink);}
+  .pager a.is-current{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:#fff;
+    cursor:default;
+    pointer-events:none;
+  }
+  .pager a.is-current .n{color:rgba(255,255,255,.8);}
 </style>
 
 <input type="checkbox" id="nav-toggle" class="nav-toggle-input" aria-hidden="true">
@@ -488,6 +520,11 @@
   </nav>
 
   <main>
+    <nav class="pager" aria-label="Navegação entre páginas">
+      <a href="index.html" class="is-current"><span class="n">01</span> Business Plan</a>
+      <a href="page2.html"><span class="n">02</span> Testes, Métricas &amp; Roadmap →</a>
+    </nav>
+
     <header class="hero">
       <p class="eyebrow">Business Plan · Pre-seed</p>
       <h1 class="title">Do mapa infinito à decisão certa.</h1>

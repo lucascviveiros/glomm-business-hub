@@ -1,0 +1,799 @@
+<title>Glomm — Testes, Métricas &amp; Roadmap</title>
+<style>
+  :root{
+    --bg:#F2F6F5;
+    --paper:#FFFFFF;
+    --ink:#10262B;
+    --ink-soft:#42615E;
+    --accent:#0E7C7B;
+    --accent-ink:#083C3B;
+    --gold:#C9832A;
+    --gold-soft:#F3E3C8;
+    --line:#D6E2E0;
+    --line-strong:#B9CBC8;
+    --radius:14px;
+    --serif: "Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    --sans: -apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono: ui-monospace,"SF Mono",Consolas,monospace;
+  }
+  :root[data-theme="dark"]{
+    --bg:#0B1817;
+    --paper:#11201F;
+    --ink:#E9F2F0;
+    --ink-soft:#9FBAB6;
+    --accent:#4BD3C4;
+    --accent-ink:#CFF6EF;
+    --gold:#E7AE5C;
+    --gold-soft:#3A2C17;
+    --line:#1F3735;
+    --line-strong:#2A4744;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0B1817;
+      --paper:#11201F;
+      --ink:#E9F2F0;
+      --ink-soft:#9FBAB6;
+      --accent:#4BD3C4;
+      --accent-ink:#CFF6EF;
+      --gold:#E7AE5C;
+      --gold-soft:#3A2C17;
+      --line:#1F3735;
+      --line-strong:#2A4744;
+    }
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--sans);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--accent-ink);}
+  ::selection{background:var(--gold-soft);color:var(--ink);}
+
+  .shell{
+    display:grid;
+    grid-template-columns:260px minmax(0,1fr);
+    gap:0;
+    max-width:1180px;
+    margin:0 auto;
+    min-height:100vh;
+  }
+
+  /* ---- Mobile top bar + drawer nav ---- */
+  .nav-toggle-input{position:absolute;opacity:0;pointer-events:none;}
+  .mobile-bar{display:none;}
+  .drawer-backdrop{display:none;}
+
+  @media (max-width:880px){
+    .shell{grid-template-columns:1fr;}
+
+    .mobile-bar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:.75rem;
+      padding:.9rem 1.1rem;
+      position:sticky;
+      top:0;
+      z-index:30;
+      background:var(--bg);
+      border-bottom:1px solid var(--line);
+    }
+    .mobile-bar .brand{margin-bottom:0;}
+    .mobile-bar .brand-name{font-size:1.02rem;}
+    .menu-btn{
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      gap:4px;
+      width:34px;height:34px;
+      border-radius:9px;
+      border:1px solid var(--line-strong);
+      background:var(--paper);
+      cursor:pointer;
+      flex:none;
+    }
+    .menu-btn span{
+      display:block;height:2px;margin:0 7px;
+      background:var(--ink);
+      border-radius:1px;
+      transition:transform .18s ease, opacity .18s ease;
+    }
+
+    nav.toc{
+      display:block;
+      position:fixed;
+      top:0;left:0;
+      height:100vh;
+      width:min(78vw,300px);
+      background:var(--bg);
+      border-right:1px solid var(--line);
+      padding:1.4rem 1.4rem 2rem;
+      transform:translateX(-100%);
+      transition:transform .22s ease;
+      z-index:50;
+      overflow-y:auto;
+    }
+    .drawer-backdrop{
+      display:block;
+      position:fixed;inset:0;
+      background:rgba(8,18,17,.45);
+      opacity:0;pointer-events:none;
+      transition:opacity .2s ease;
+      z-index:40;
+    }
+    .nav-toggle-input:checked ~ .shell nav.toc{transform:translateX(0);}
+    .nav-toggle-input:checked ~ .shell .drawer-backdrop{opacity:1;pointer-events:auto;}
+    .nav-toggle-input:checked ~ .shell .menu-btn span:nth-child(1){transform:translateY(6px) rotate(45deg);}
+    .nav-toggle-input:checked ~ .shell .menu-btn span:nth-child(2){opacity:0;}
+    .nav-toggle-input:checked ~ .shell .menu-btn span:nth-child(3){transform:translateY(-6px) rotate(-45deg);}
+  }
+
+  @media (max-width:480px){
+    nav.toc{width:82vw;}
+  }
+
+  /* ---- Sidebar ---- */
+  nav.toc{
+    position:sticky;
+    top:0;
+    align-self:start;
+    height:100vh;
+    overflow-y:auto;
+    padding:2.5rem 1.5rem 2rem 0;
+    border-right:1px solid var(--line);
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:.6rem;
+    margin-bottom:.35rem;
+  }
+  .brand-mark{
+    width:30px;height:30px;border-radius:9px;
+    background:linear-gradient(160deg,var(--accent),var(--accent-ink));
+    display:flex;align-items:center;justify-content:center;
+    color:var(--paper);font-family:var(--serif);font-weight:700;font-size:.95rem;
+    flex:none;
+  }
+  .brand-name{
+    font-family:var(--serif);
+    font-weight:700;
+    font-size:1.15rem;
+    letter-spacing:.01em;
+  }
+  .brand-sub{
+    font-size:.72rem;
+    color:var(--ink-soft);
+    text-transform:uppercase;
+    letter-spacing:.09em;
+    margin:0 0 1.75rem;
+  }
+  .toc-status{
+    display:inline-flex;align-items:center;gap:.4rem;
+    font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;
+    color:var(--gold);
+    background:var(--gold-soft);
+    border-radius:999px;
+    padding:.3rem .65rem;
+    margin-bottom:1.6rem;
+  }
+  .toc-status::before{
+    content:"";width:6px;height:6px;border-radius:50%;
+    background:var(--gold);
+  }
+  .toc-list{
+    list-style:none;margin:0;padding:0;
+    font-size:.86rem;
+  }
+  .toc-list a{
+    display:block;
+    padding:.4rem 0;
+    color:var(--ink-soft);
+    text-decoration:none;
+    border-left:2px solid transparent;
+    padding-left:.75rem;
+    margin-left:-.75rem;
+    transition:color .15s ease, border-color .15s ease;
+  }
+  .toc-list a:hover{color:var(--ink);border-color:var(--line-strong);}
+  .toc-list .num{
+    font-family:var(--mono);
+    font-size:.72rem;
+    color:var(--ink-soft);
+    margin-right:.5rem;
+  }
+  .toc-foot{
+    margin-top:2rem;
+    padding-top:1.25rem;
+    border-top:1px solid var(--line);
+    font-size:.76rem;
+    color:var(--ink-soft);
+  }
+
+  /* ---- Main column ---- */
+  main{
+    padding:3.5rem 3rem 6rem;
+    max-width:760px;
+  }
+  @media (max-width:880px){
+    main{padding:2.25rem 1.4rem 4rem;}
+  }
+
+  header.hero{
+    margin-bottom:3rem;
+  }
+  .eyebrow{
+    font-size:.75rem;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    color:var(--accent-ink);
+    font-weight:600;
+    margin:0 0 .9rem;
+  }
+  h1.title{
+    font-family:var(--serif);
+    font-weight:700;
+    font-size:clamp(2.1rem,4vw,2.9rem);
+    line-height:1.08;
+    margin:0 0 .9rem;
+    text-wrap:balance;
+    letter-spacing:-.01em;
+  }
+  .thesis{
+    font-size:1.08rem;
+    color:var(--ink-soft);
+    max-width:60ch;
+    margin:0;
+  }
+
+  section{
+    margin-bottom:3.4rem;
+    scroll-margin-top:2rem;
+  }
+  h2{
+    font-family:var(--serif);
+    font-size:1.55rem;
+    font-weight:700;
+    margin:0 0 .3rem;
+    display:flex;
+    align-items:baseline;
+    gap:.6rem;
+  }
+  h2 .idx{
+    font-family:var(--mono);
+    font-size:.85rem;
+    color:var(--accent-ink);
+    font-weight:600;
+  }
+  h3{
+    font-family:var(--serif);
+    font-size:1.12rem;
+    font-weight:700;
+    margin:1.6rem 0 .5rem;
+  }
+  .section-lede{
+    color:var(--ink-soft);
+    font-size:.95rem;
+    margin:0 0 1.3rem;
+    max-width:62ch;
+  }
+  p{max-width:66ch;}
+  p.body{font-size:1rem;}
+  strong{color:var(--ink);}
+
+  .pullquote{
+    font-family:var(--serif);
+    font-size:1.28rem;
+    line-height:1.45;
+    color:var(--ink);
+    border-left:3px solid var(--accent);
+    padding:.2rem 0 .2rem 1.3rem;
+    margin:1.6rem 0;
+    max-width:58ch;
+  }
+
+  /* feature table */
+  .feature-grid{
+    display:grid;
+    gap:.7rem;
+    margin:1.4rem 0;
+  }
+  .feature-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:1rem;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:1rem 1.2rem;
+  }
+  @media (max-width:640px){
+    .feature-row{grid-template-columns:1fr;}
+  }
+  .feature-row .k{
+    font-weight:600;
+    font-size:.92rem;
+  }
+  .feature-row .v{
+    font-size:.88rem;
+    color:var(--ink-soft);
+  }
+  .feature-row .v::before{
+    content:"→ ";
+    color:var(--accent);
+  }
+
+  /* competitive / data table */
+  .table-wrap{overflow-x:auto;margin:1.4rem 0;}
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:.88rem;
+    min-width:560px;
+  }
+  th,td{
+    text-align:left;
+    padding:.7rem .9rem;
+    border-bottom:1px solid var(--line);
+    vertical-align:top;
+  }
+  th{
+    font-size:.72rem;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    color:var(--ink-soft);
+    font-weight:600;
+    border-bottom:1px solid var(--line-strong);
+  }
+  td.ref{font-weight:600;font-family:var(--serif);}
+  td.num{font-family:var(--mono);font-size:.85rem;white-space:nowrap;}
+  tbody tr:last-child td{border-bottom:none;}
+
+  /* roadmap / funnel timeline */
+  .timeline{
+    list-style:none;margin:1.4rem 0 0;padding:0;
+    border-left:2px solid var(--line-strong);
+  }
+  .timeline li{
+    position:relative;
+    padding:0 0 1.6rem 1.6rem;
+  }
+  .timeline li::before{
+    content:"";
+    position:absolute;left:-6.5px;top:.25rem;
+    width:11px;height:11px;border-radius:50%;
+    background:var(--paper);
+    border:2px solid var(--line-strong);
+  }
+  .timeline li.is-live::before{border-color:var(--accent);background:var(--accent);}
+  .timeline li.is-plan::before{border-color:var(--gold);background:var(--paper);}
+  .timeline li.is-gap::before{border-color:#C0392B;background:#C0392B;}
+  .phase-head{display:flex;align-items:center;gap:.6rem;margin-bottom:.25rem;flex-wrap:wrap;}
+  .phase-name{font-weight:700;font-size:.98rem;}
+  .pill{
+    font-size:.66rem;text-transform:uppercase;letter-spacing:.07em;
+    padding:.18rem .55rem;border-radius:999px;font-weight:600;
+  }
+  .pill.live{background:var(--gold-soft);color:var(--gold);}
+  .pill.next{background:var(--line);color:var(--ink-soft);}
+  .pill.plan{background:transparent;border:1px dashed var(--line-strong);color:var(--ink-soft);}
+  .pill.gap{background:#F8D7D3;color:#9E2B1F;}
+  .phase-desc{font-size:.9rem;color:var(--ink-soft);max-width:56ch;}
+
+  .open-list{
+    list-style:none;margin:1.2rem 0 0;padding:0;
+    display:grid;gap:.65rem;
+  }
+  .open-list li{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-left:3px solid var(--gold);
+    border-radius:10px;
+    padding:.8rem 1rem;
+    font-size:.9rem;
+  }
+  .open-list li strong{display:block;margin-bottom:.15rem;}
+
+  /* swatches for color section */
+  .swatch-row{display:flex;align-items:center;gap:.8rem;margin:.5rem 0;flex-wrap:wrap;}
+  .swatch{
+    width:28px;height:28px;border-radius:8px;flex:none;
+    border:1px solid rgba(0,0,0,.12);
+  }
+  .swatch-label{font-size:.86rem;color:var(--ink-soft);}
+  .swatch-label strong{color:var(--ink);}
+  .contrast-bad{color:#B23A2E;font-weight:700;}
+  .contrast-ok{color:var(--accent-ink);font-weight:700;}
+
+  footer.doc-footer{
+    margin-top:4rem;
+    padding-top:1.6rem;
+    border-top:1px solid var(--line);
+    font-size:.82rem;
+    color:var(--ink-soft);
+    display:flex;
+    justify-content:space-between;
+    gap:1rem;
+    flex-wrap:wrap;
+  }
+
+  @media (prefers-reduced-motion: no-preference){
+    .toc-list a{transition:color .15s ease, border-color .15s ease;}
+  }
+
+  /* ---- Page pager ---- */
+  .pager{
+    display:flex;gap:.7rem;flex-wrap:wrap;
+    margin:0 0 2.2rem;
+  }
+  .pager a{
+    display:inline-flex;align-items:center;gap:.5rem;
+    padding:.55rem 1.05rem;
+    border-radius:999px;
+    border:1px solid var(--line-strong);
+    background:var(--paper);
+    color:var(--ink);
+    font-size:.84rem;
+    font-weight:600;
+    text-decoration:none;
+    transition:border-color .15s ease, color .15s ease, background .15s ease;
+  }
+  .pager a .n{
+    font-family:var(--mono);
+    font-size:.72rem;
+    color:var(--ink-soft);
+  }
+  .pager a:hover{border-color:var(--accent);color:var(--accent-ink);}
+  .pager a.is-current{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:#fff;
+    cursor:default;
+    pointer-events:none;
+  }
+  .pager a.is-current .n{color:rgba(255,255,255,.8);}
+</style>
+
+<input type="checkbox" id="nav-toggle" class="nav-toggle-input" aria-hidden="true">
+
+<div class="shell">
+  <div class="mobile-bar">
+    <div class="brand">
+      <div class="brand-mark">G</div>
+      <div class="brand-name">Glomm</div>
+    </div>
+    <label class="menu-btn" for="nav-toggle" aria-label="Abrir sumário" role="button" tabindex="0">
+      <span></span><span></span><span></span>
+    </label>
+  </div>
+  <label class="drawer-backdrop" for="nav-toggle" aria-hidden="true"></label>
+
+  <nav class="toc" aria-label="Sumário">
+    <div class="brand">
+      <div class="brand-mark">G</div>
+      <div class="brand-name">Glomm</div>
+    </div>
+    <p class="brand-sub">Testes &amp; Execução</p>
+    <div class="toc-status">Rascunho vivo</div>
+    <ul class="toc-list">
+      <li><a href="#descobertas"><span class="num">01</span>Três descobertas</a></li>
+      <li><a href="#testes"><span class="num">02</span>Plano de testes</a></li>
+      <li><a href="#metricas"><span class="num">03</span>Métricas</a></li>
+      <li><a href="#roadmap2"><span class="num">04</span>Roadmap 0–24m</a></li>
+      <li><a href="#concorrencia"><span class="num">05</span>Concorrência</a></li>
+      <li><a href="#economia"><span class="num">06</span>Unit economics</a></li>
+      <li><a href="#backlog"><span class="num">07</span>Backlog de features</a></li>
+      <li><a href="#cores"><span class="num">08</span>Cores &amp; psicologia</a></li>
+      <li><a href="#gestao"><span class="num">09</span>Gestão &amp; exit</a></li>
+    </ul>
+    <div class="toc-foot">
+      Página 2 do hub: leitura online do plano de testes, métricas, roadmap e modelo de negócio do Glomm v12.
+    </div>
+  </nav>
+
+  <main>
+    <nav class="pager" aria-label="Navegação entre páginas">
+      <a href="index.html"><span class="n">01</span> ← Business Plan</a>
+      <a href="page2.html" class="is-current"><span class="n">02</span> Testes, Métricas &amp; Roadmap</a>
+    </nav>
+
+    <header class="hero">
+      <p class="eyebrow">Execução · Teste fechado · v12</p>
+      <h1 class="title">Da fase de testes à empresa vendável.</h1>
+      <p class="thesis">Plano de testes, instrumentação, roadmap de 24 meses, análise de 11 concorrentes, modelo de negócio e backlog priorizado — construídos em cima do código real do app, não de suposição.</p>
+    </header>
+
+    <section id="descobertas">
+      <h2><span class="idx">01</span>Três descobertas que mudam a estratégia</h2>
+      <p class="section-lede">Lidas diretamente do repositório Flutter (<code>lib/</code>), não são opinião.</p>
+
+      <div class="feature-grid">
+        <div class="feature-row">
+          <div class="k">🔴 O app não mede nada</div>
+          <div class="v">Zero ocorrências de Analytics, Crashlytics, Remote Config ou logEvent em <code>lib/</code>. Sem isso, 14 dias de teste fechado produzem só opinião verbal.</div>
+        </div>
+        <div class="feature-row">
+          <div class="k">🔴 Economia unitária invertida</div>
+          <div class="v">NearbySearch custa US$ 0,032/chamada. Uma sessão típica custa ~US$ 0,069; a receita de anúncio da mesma sessão é ~US$ 0,0035. Cada sessão gratuita custa ~20× mais do que arrecada.</div>
+        </div>
+        <div class="feature-row">
+          <div class="k">🔴 Hierarquia visual invertida</div>
+          <div class="v">O marcador do negócio com &lt;10 avaliações tem contraste 5,42:1 (o mais visível do mapa); o de 500+ avaliações tem 2,05:1. O sistema chama atenção para o alvo errado.</div>
+        </div>
+      </div>
+
+      <p class="pullquote">Cache de 0% para 90% reduz o custo de API em 25×. Nenhuma outra alavanca do negócio tem esse retorno — é o que separa o cenário realista do cenário que quebra a empresa.</p>
+    </section>
+
+    <section id="testes">
+      <h2><span class="idx">02</span>Plano de testes</h2>
+      <p class="section-lede">Cinco fases, da estabilização até a produção monitorada.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Fase</th><th>Janela</th><th>Quem</th><th>Objetivo</th></tr></thead>
+          <tbody>
+            <tr><td class="ref">F0 · Auto-teste</td><td class="num">3–5 dias</td><td>Você</td><td>Instrumentar antes de ter público</td></tr>
+            <tr><td class="ref">F1 · Alpha interno</td><td class="num">5–7 dias</td><td>3–5 pessoas</td><td>Matar crashes e becos sem saída</td></tr>
+            <tr><td class="ref">F2 · Teste fechado</td><td class="num">14 dias corridos</td><td>16–20 convidados</td><td>Cumprir requisito da Play + validar jornada</td></tr>
+            <tr><td class="ref">F3 · Revisão</td><td class="num">7–10 dias</td><td>Você</td><td>Corrigir P0/P1 · solicitar produção</td></tr>
+            <tr><td class="ref">F4 · Produção</td><td class="num">1º mês</td><td>Público</td><td>Validar descoberta · corrigir abandono</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Tempo de uso esperado por testador</h3>
+      <p class="body"><strong>O que pedir:</strong> 3× por semana, 5 minutos por vez — cerca de 35 minutos totais em 14 dias. Deliberadamente baixo: pedir mais reduz a adesão.</p>
+
+      <div class="feature-grid">
+        <div class="feature-row"><div class="k">Engajado — 20% (~4 pessoas)</div><div class="v">8–15 sessões · testa a fundo, reporta bugs sozinho</div></div>
+        <div class="feature-row"><div class="k">Cumpridor — 40% (~8 pessoas)</div><div class="v">3–6 sessões · faz o pedido, responde o formulário</div></div>
+        <div class="feature-row"><div class="k">Passivo — 30% (~6 pessoas)</div><div class="v">1–2 sessões · instala, abre uma vez, mantém instalado</div></div>
+        <div class="feature-row"><div class="k">Evaporado — 10% (~2 pessoas)</div><div class="v">0 sessões · aceita e some, ou desinstala</div></div>
+      </div>
+
+      <p class="pullquote">O comportamento do "passivo" — abriu uma vez e não voltou — é o sinal de retenção mais honesto que você vai receber antes do lançamento. Não é falha do testador; é o dado mais importante do teste.</p>
+
+      <h3>Os cinco roteiros de teste</h3>
+      <ul class="open-list">
+        <li><strong>Roteiro 1 — Almoço em 2 minutos</strong>Fluxo feliz: DiscoveryFilter → Explorar → rota externa em &lt;90s.</li>
+        <li><strong>Roteiro 2 — Não sei o que quero</strong>Descoberta aberta; mede paralisia de escolha (&gt;5 categorias abertas = sobrecarga).</li>
+        <li><strong>Roteiro 3 — Região diferente</strong>Busca manual de outra cidade; testa geocoding e histórico.</li>
+        <li><strong>Roteiro 4 — Limite e monetização</strong>Reação ao anúncio recompensado e ao paywall do Glomm Pro.</li>
+        <li><strong>Roteiro 5 — Rota com paradas</strong>Feature já construída (<code>RouteManager</code>); previsão de descoberta &lt;20% sem dica — já é a conclusão.</li>
+      </ul>
+    </section>
+
+    <section id="metricas">
+      <h2><span class="idx">03</span>Métricas e instrumentação</h2>
+      <p class="section-lede">North Star, funil mínimo de 12 eventos e guardrails.</p>
+
+      <p class="pullquote">North Star: <strong>Decisões Assistidas por Semana (DAS)</strong> — número de vezes por semana em que um usuário chega a uma ação real: abrir rota, compartilhar, copiar endereço ou abrir a loja.</p>
+
+      <h3>Funil mínimo</h3>
+      <ul class="timeline">
+        <li class="is-gap"><div class="phase-head"><span class="phase-name">app_open</span><span class="pill gap">Não instrumentado</span></div><p class="phase-desc">Abertura do app, locale, tema, status Pro.</p></li>
+        <li class="is-gap"><div class="phase-head"><span class="phase-name">location_permission_result</span></div><p class="phase-desc">Concedida, negada, negada para sempre, uma vez.</p></li>
+        <li class="is-gap"><div class="phase-head"><span class="phase-name">category_selected → explore_tapped</span></div><p class="phase-desc">Intenção definida e confirmada.</p></li>
+        <li class="is-gap"><div class="phase-head"><span class="phase-name">results_shown</span><span class="pill gap">Protege o caixa</span></div><p class="phase-desc">count, latency_ms, cache_hit, api_calls — o evento que impede a falência por custo de API.</p></li>
+        <li class="is-gap"><div class="phase-head"><span class="phase-name">business_opened</span></div><p class="phase-desc">Posição na lista, nota, distância.</p></li>
+        <li class="is-gap"><div class="phase-head"><span class="phase-name">external_action</span><span class="pill gap">⭐ North Star</span></div><p class="phase-desc">maps / waze / share / copy / store — a métrica que alimenta a DAS.</p></li>
+      </ul>
+
+      <h3>Guardrails</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Métrica</th><th>Meta</th><th>Por quê</th></tr></thead>
+          <tbody>
+            <tr><td class="ref">Custo de API / sessão</td><td class="num">&lt; US$ 0,015</td><td>Existencial</td></tr>
+            <tr><td class="ref">Cache hit</td><td class="num">≥ 90%</td><td>Único jeito do modelo fechar</td></tr>
+            <tr><td class="ref">Crash-free users</td><td class="num">≥ 99%</td><td>Nota na loja despenca abaixo disso</td></tr>
+            <tr><td class="ref">results_shown p75</td><td class="num">&lt; 4.000 ms</td><td>Acima disso, abandono cresce muito</td></tr>
+            <tr><td class="ref">Sean Ellis (F2)</td><td class="num">≥ 25%</td><td>Sinal mínimo de product-market fit</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="roadmap2">
+      <h2><span class="idx">04</span>Roadmap — 0 a 24 meses</h2>
+      <p class="section-lede">Sequência de fases alinhada ao plano definido, com critério de passagem entre elas.</p>
+      <ul class="timeline">
+        <li class="is-live">
+          <div class="phase-head"><span class="phase-name">F0 — Estabilizar &amp; instrumentar</span><span class="pill live">Agora</span></div>
+          <p class="phase-desc">Analytics, Crashlytics, Remote Config, correção de cores. Bloqueia tudo o resto.</p>
+        </li>
+        <li>
+          <div class="phase-head"><span class="phase-name">F1 — Teste fechado</span><span class="pill next">14 dias</span></div>
+          <p class="phase-desc">16–20 convidados, 5 roteiros, Sean Ellis ≥ 25%.</p>
+        </li>
+        <li>
+          <div class="phase-head"><span class="phase-name">F2 — Produção &amp; documentação</span></div>
+          <p class="phase-desc">Corrigir P0/P1, solicitar acesso à produção, documentar aprendizados.</p>
+        </li>
+        <li>
+          <div class="phase-head"><span class="phase-name">F3 — 1º mês público</span></div>
+          <p class="phase-desc">Validar descoberta, achar o degrau do funil que sangra, e consertar só ele.</p>
+        </li>
+        <li class="is-plan">
+          <div class="phase-head"><span class="phase-name">F4 — Meses 2–3 · Retenção e dados próprios</span><span class="pill plan">Fase-chave</span></div>
+          <p class="phase-desc">Salvar/Favoritos, cache central compartilhado, coleções editoriais. A fase que resolve retenção, custo e defensabilidade ao mesmo tempo.</p>
+        </li>
+        <li class="is-plan">
+          <div class="phase-head"><span class="phase-name">F5 — Meses 3–4 · Cupons grátis, 10–20 parceiros</span><span class="pill plan">Piloto</span></div>
+          <p class="phase-desc">Testa a operação comercial, não o app: resposta, resgate, atribuição.</p>
+        </li>
+        <li class="is-plan">
+          <div class="phase-head"><span class="phase-name">F6 — Meses 4–6 · Cobrar por campanha comprovada</span><span class="pill plan">Receita</span></div>
+          <p class="phase-desc">Cobrar por resultado atribuível, nunca por impressão.</p>
+        </li>
+        <li class="is-plan">
+          <div class="phase-head"><span class="phase-name">F7 — Meses 6–12 · Expansão geográfica</span><span class="pill plan">Escala</span></div>
+          <p class="phase-desc">SP → Grande SP → outras cidades. Só expande com bairro-piloto lucrativo.</p>
+        </li>
+        <li class="is-plan">
+          <div class="phase-head"><span class="phase-name">F8 — Meses 12–24 · Escala e preparação de exit</span><span class="pill plan">Exit</span></div>
+          <p class="phase-desc">Governança, contratos transferíveis, dados próprios com valor autônomo.</p>
+        </li>
+      </ul>
+    </section>
+
+    <section id="concorrencia">
+      <h2><span class="idx">05</span>Análise competitiva</h2>
+      <p class="section-lede">Onze referências — nenhuma sobreviveu vendendo só descoberta financiada por anúncio.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Player</th><th>País</th><th>Ativo principal</th><th>Lição para o Glomm</th></tr></thead>
+          <tbody>
+            <tr><td class="ref">Yelp</td><td>EUA</td><td>Reviews próprias</td><td>Visibilidade sem prova destrói confiança do comerciante</td></tr>
+            <tr><td class="ref">TripAdvisor</td><td>EUA</td><td>Reviews de viagem</td><td>O dinheiro está no inventário reservável</td></tr>
+            <tr><td class="ref">Tabelog</td><td>Japão</td><td>Escala de notas crível</td><td>Escala própria é ativo — e conflito de interesse a gerenciar</td></tr>
+            <tr><td class="ref">Hot Pepper</td><td>Japão</td><td>Cupom + pontos</td><td>Modelo mais próximo da Fase 5 do Glomm</td></tr>
+            <tr><td class="ref">Retty</td><td>Japão</td><td>Grafo social</td><td>Procedência da avaliação vence volume</td></tr>
+            <tr><td class="ref">Gurunavi</td><td>Japão</td><td>Listagem paga</td><td>Listagem sem prova de resultado envelhece mal</td></tr>
+            <tr><td class="ref">Zomato</td><td>Índia</td><td>Rede + transação</td><td>Precedente direto: diretório → Gold (benefício positivo)</td></tr>
+            <tr><td class="ref">magicpin</td><td>Índia</td><td>Voucher local</td><td>Monetiza sem escala de mídia</td></tr>
+            <tr><td class="ref">Swiggy Dineout</td><td>Índia</td><td>Distribuição</td><td>Distribuição vence descoberta isolada</td></tr>
+            <tr><td class="ref">JustDial</td><td>Índia</td><td>Leads</td><td>Vendas agressivas não escalam para fundador solo</td></tr>
+            <tr><td class="ref">TheFork</td><td>Europa</td><td>Software do restaurante</td><td>Workflow diário é a retenção real do comerciante</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="pullquote">"O app que resolve a indecisão local em 60 segundos — e o canal que prova ao comerciante do bairro quantas pessoas ele recebeu por causa dele." Duas promessas, uma mecânica: o cupom resgatado.</p>
+    </section>
+
+    <section id="economia">
+      <h2><span class="idx">06</span>Modelo de negócio e unit economics</h2>
+
+      <h3>O custo, lido do código</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>SKU</th><th>Custo unitário</th><th>Grátis/mês</th></tr></thead>
+          <tbody>
+            <tr><td class="ref">NearbySearch</td><td class="num">US$ 0,032</td><td class="num">5.000</td></tr>
+            <tr><td class="ref">Geocoding</td><td class="num">US$ 0,005</td><td class="num">10.000</td></tr>
+            <tr><td class="ref">ReverseGeocoding</td><td class="num">US$ 0,005</td><td class="num">10.000</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Efeito do cache no custo (10k MAU, 4 sessões/mês)</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Cache hit</th><th>Custo mensal</th><th>Custo/sessão</th></tr></thead>
+          <tbody>
+            <tr><td class="num">0%</td><td class="num">US$ 2.400</td><td class="num">US$ 0,060</td></tr>
+            <tr><td class="num">50%</td><td class="num">US$ 1.120</td><td class="num">US$ 0,028</td></tr>
+            <tr><td class="num">80%</td><td class="num">US$ 352</td><td class="num">US$ 0,0088</td></tr>
+            <tr><td class="num"><strong>90%</strong></td><td class="num"><strong>US$ 96</strong></td><td class="num"><strong>US$ 0,0024</strong></td></tr>
+            <tr><td class="num">95%</td><td class="num">~US$ 0 (free tier)</td><td class="num">US$ 0</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>O número que reordena prioridades</h3>
+      <div class="feature-grid">
+        <div class="feature-row"><div class="k">Para gerar R$ 4.500/mês via anúncio</div><div class="v">~58.000 usuários ativos</div></div>
+        <div class="feature-row"><div class="k">Via Glomm Pro</div><div class="v">~450 assinantes</div></div>
+        <div class="feature-row"><div class="k">Via comerciante</div><div class="v"><strong>15 comerciantes a R$ 300/mês</strong></div></div>
+      </div>
+      <p class="pullquote">Quinze conversas bem feitas equivalem a 58 mil usuários. Dois comerciantes no plano Campanha pagam a operação inteira do negócio.</p>
+    </section>
+
+    <section id="backlog">
+      <h2><span class="idx">07</span>Backlog de features priorizado</h2>
+      <p class="section-lede">Motivo, ganho e o mecanismo psicológico por trás de cada uma.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Feature</th><th>Motivo</th><th>Efeito psicológico</th></tr></thead>
+          <tbody>
+            <tr><td class="ref">Salvar / Favoritos ⭐</td><td>Não existe razão para o usuário voltar</td><td>Efeito de dotação + custo afundado + efeito Zeigarnik (tarefa incompleta puxa o retorno)</td></tr>
+            <tr><td class="ref">Cache central</td><td>Custo de API é risco existencial</td><td>Respostas instantâneas → percepção de competência</td></tr>
+            <tr><td class="ref">Atalhos rápidos</td><td>Usuário sabe "como" decidir antes do "quê"</td><td>Redução de sobrecarga de escolha (Iyengar &amp; Lepper)</td></tr>
+            <tr><td class="ref">Onboarding contextual</td><td>Pedir permissão sem explicar é a maior perda de funil</td><td>Reciprocidade antecipada; reduz reatância psicológica</td></tr>
+            <tr><td class="ref">Expor Rotas (já existe)</td><td>Construída, ninguém encontra</td><td>Efeito IKEA — montar cria vínculo com o resultado</td></tr>
+            <tr><td class="ref">Reposicionar Glomm Pro</td><td>Hoje vende "parar de incomodar" (alívio)</td><td>Migra para motivação de aproximação + efeito chamariz + aversão à perda</td></tr>
+            <tr><td class="ref">Cupons + painel comerciante ⭐</td><td>Única receita que escala sem milhões de usuários</td><td>Aversão à perda (validade) + reciprocidade + remove incerteza de atribuição</td></tr>
+            <tr><td class="ref">Análise GLOMM ampliada</td><td>Único elemento autoral do app hoje</td><td>Fluência de processamento → julgamento de confiança</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="cores">
+      <h2><span class="idx">08</span>Cores, psicologia e acessibilidade</h2>
+      <p class="section-lede">Contrastes calculados via WCAG 2.1 sobre a paleta real do app.</p>
+
+      <h3>O problema: hierarquia de marcadores invertida</h3>
+      <div class="swatch-row"><span class="swatch" style="background:#59647D"></span><span class="swatch-label"><strong>&lt;10 avaliações</strong> — contraste 5,42:1 <span class="contrast-bad">(mais visível — errado)</span></span></div>
+      <div class="swatch-row"><span class="swatch" style="background:#FFA726"></span><span class="swatch-label"><strong>&lt;50 avaliações</strong> — contraste 1,78:1 <span class="contrast-bad">falha</span></span></div>
+      <div class="swatch-row"><span class="swatch" style="background:#FFD740"></span><span class="swatch-label"><strong>&lt;500 avaliações</strong> — contraste 1,28:1 <span class="contrast-bad">falha grave</span></span></div>
+      <div class="swatch-row"><span class="swatch" style="background:#59BBC7"></span><span class="swatch-label"><strong>500+ avaliações</strong> — contraste 2,05:1 <span class="contrast-bad">(menos visível — errado)</span></span></div>
+
+      <p class="pullquote">O negócio com 800 avaliações tem o marcador menos visível do mapa. O com 6 avaliações tem o mais visível. O sistema gasta a atenção do usuário exatamente ao contrário do que deveria.</p>
+
+      <h3>Correção proposta</h3>
+      <div class="swatch-row"><span class="swatch" style="background:#94A3B8"></span><span class="swatch-label">&lt;10 → cinza claro, 2,3:1 — discreto</span></div>
+      <div class="swatch-row"><span class="swatch" style="background:#64748B"></span><span class="swatch-label">&lt;50 → cinza médio, 4,8:1 — neutro</span></div>
+      <div class="swatch-row"><span class="swatch" style="background:#0F766E"></span><span class="swatch-label">&lt;500 → teal escuro, 5,5:1 — destacado</span></div>
+      <div class="swatch-row"><span class="swatch" style="background:#6D28D9"></span><span class="swatch-label">500+ → roxo, <span class="contrast-ok">7,1:1 — máximo destaque</span></span></div>
+
+      <h3>Outros pontos corrigidos</h3>
+      <div class="feature-grid">
+        <div class="feature-row"><div class="k"><code>AppColors.link</code></div><div class="v">1,24:1 (invisível) → #0F766E, 5,47:1</div></div>
+        <div class="feature-row"><div class="k">Botão "Explorar" (CTA)</div><div class="v">Turquesa da marca a 1,93:1 → #0E7C6B, 5,10:1</div></div>
+        <div class="feature-row"><div class="k">Princípio adotado</div><div class="v">Separar cor de marca (decorativa) de cor de ação (CTA) — quando tudo é destaque, nada é destaque</div></div>
+      </div>
+
+      <p class="body">Base de psicologia usada: <strong>efeito Von Restorff</strong> (o que destoa é notado e lembrado), <strong>fluência de processamento</strong> (fácil de ler = mais confiável) e <strong>convenção cultural aprendida</strong> (amarelo/laranja = cautela no Ocidente — lutar contra isso tem custo).</p>
+    </section>
+
+    <section id="gestao">
+      <h2><span class="idx">09</span>Gestão empresarial e preparação para exit</h2>
+
+      <ul class="open-list">
+        <li><strong>Estrutura societária</strong>MEI agora → SLU antes do primeiro contrato de comerciante (Fase 6), para separação patrimonial e emissão de NF.</li>
+        <li><strong>Marca</strong>Registrar "GLOMM" no INPI agora — classes 42 (software) e 35 (publicidade/negócios). Processo leva 12–24 meses.</li>
+        <li><strong>LGPD</strong>Nunca armazenar coordenadas exatas — arredondar para ~1km. Consentimento UMP para anúncio personalizado antes do 1º testador externo.</li>
+        <li><strong>Risco nº1 subestimado</strong>Esgotamento do fundador solo tentando executar 8 fases ao mesmo tempo. O roadmap é sequenciado exatamente para evitar isso.</li>
+      </ul>
+
+      <h3>O que determina o valor numa venda</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Fator</th><th>Efeito no múltiplo</th></tr></thead>
+          <tbody>
+            <tr><td>Receita recorrente de comerciante</td><td class="contrast-ok">⬆⬆ o que mais aumenta</td></tr>
+            <tr><td>Receita de anúncio</td><td class="contrast-bad">⬇ volátil, múltiplo baixo</td></tr>
+            <tr><td>Dependência do fundador</td><td class="contrast-bad">⬇⬇ o que mais reduz</td></tr>
+            <tr><td>Dados próprios defensáveis</td><td class="contrast-ok">⬆</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="pullquote">R$ 10 mil/mês de 40 comerciantes sob contrato valem muito mais do que R$ 10 mil/mês de publicidade — mesma receita, valor de venda muito diferente.</p>
+    </section>
+
+    <footer class="doc-footer">
+      <span>Glomm — Testes, Métricas &amp; Roadmap</span>
+      <span>Documentação completa em <code>docs/negocio/*.md</code> e <code>GLOMM_Plano_Negocio_Roadmap_v12.docx</code> do repositório do app</span>
+    </footer>
+  </main>
+</div>
+
+<script>
+  document.querySelectorAll('nav.toc a').forEach(function(link){
+    link.addEventListener('click', function(){
+      var toggle = document.getElementById('nav-toggle');
+      if (toggle) toggle.checked = false;
+    });
+  });
+</script>
