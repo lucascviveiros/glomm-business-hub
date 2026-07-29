@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Roadmap técnico do Glomm: próximas decisões sobre consumo do Google Places e evolução para um gateway próprio.">
+  <title>Glomm — Roadmap</title>
+  <style>
+    :root{
+      --bg:#F2F6F5;--paper:#FFFFFF;--ink:#10262B;--ink-soft:#42615E;
+      --accent:#0E7C7B;--accent-ink:#083C3B;--gold:#C9832A;
+      --gold-soft:#F3E3C8;--line:#D6E2E0;--line-strong:#B9CBC8;
+      --radius:14px;--serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+      --sans:-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+      --mono:ui-monospace,"SF Mono",Consolas,monospace;
+    }
+    :root[data-theme="dark"]{
+      --bg:#0B1817;--paper:#11201F;--ink:#E9F2F0;--ink-soft:#9FBAB6;
+      --accent:#4BD3C4;--accent-ink:#CFF6EF;--gold:#E7AE5C;
+      --gold-soft:#3A2C17;--line:#1F3735;--line-strong:#2A4744;
+    }
+    @media(prefers-color-scheme:dark){
+      :root:not([data-theme="light"]){
+        --bg:#0B1817;--paper:#11201F;--ink:#E9F2F0;--ink-soft:#9FBAB6;
+        --accent:#4BD3C4;--accent-ink:#CFF6EF;--gold:#E7AE5C;
+        --gold-soft:#3A2C17;--line:#1F3735;--line-strong:#2A4744;
+      }
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased}
+    ::selection{background:var(--gold-soft);color:var(--ink)}
+    .shell{display:grid;grid-template-columns:260px minmax(0,1fr);max-width:1180px;margin:0 auto;min-height:100vh}
+    .nav-toggle-input{position:absolute;opacity:0;pointer-events:none}
+    .mobile-bar,.drawer-backdrop{display:none}
+    nav.toc{position:sticky;top:0;align-self:start;height:100vh;overflow-y:auto;padding:2.5rem 1.5rem 2rem 0;border-right:1px solid var(--line)}
+    .brand{display:flex;align-items:center;gap:.6rem;margin-bottom:.35rem}
+    .brand-mark{width:30px;height:30px;border-radius:9px;background:linear-gradient(160deg,var(--accent),var(--accent-ink));display:flex;align-items:center;justify-content:center;color:var(--paper);font-family:var(--serif);font-weight:700}
+    .brand-name{font-family:var(--serif);font-weight:700;font-size:1.15rem}
+    .brand-sub{font-size:.72rem;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.09em;margin:0 0 1.75rem}
+    .toc-status{display:inline-flex;align-items:center;gap:.4rem;font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);background:var(--gold-soft);border-radius:999px;padding:.3rem .65rem;margin-bottom:1.6rem}
+    .toc-status::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--gold)}
+    .toc-list{list-style:none;margin:0;padding:0;font-size:.86rem}
+    .toc-list a{display:block;padding:.4rem 0 .4rem .75rem;color:var(--ink-soft);text-decoration:none;border-left:2px solid transparent;margin-left:-.75rem}
+    .toc-list a:hover{color:var(--ink);border-color:var(--line-strong)}
+    .toc-list .num{font-family:var(--mono);font-size:.72rem;color:var(--ink-soft);margin-right:.5rem}
+    .toc-foot{margin-top:2rem;padding-top:1.25rem;border-top:1px solid var(--line);font-size:.76rem;color:var(--ink-soft)}
+    main{padding:3.5rem 3rem 6rem;max-width:800px}
+    .pager{display:flex;gap:.7rem;flex-wrap:wrap;margin:0 0 2.2rem}
+    .pager a{display:inline-flex;align-items:center;gap:.5rem;padding:.55rem 1.05rem;border-radius:999px;border:1px solid var(--line-strong);background:var(--paper);color:var(--ink);font-size:.84rem;font-weight:600;text-decoration:none}
+    .pager a:hover{border-color:var(--accent);color:var(--accent-ink)}
+    .pager a .n{font-family:var(--mono);font-size:.72rem;color:var(--ink-soft)}
+    .pager a.is-current{background:var(--accent);border-color:var(--accent);color:#fff;pointer-events:none}
+    .pager a.is-current .n{color:rgba(255,255,255,.8)}
+    header.hero{margin-bottom:3rem}
+    .eyebrow{font-size:.75rem;text-transform:uppercase;letter-spacing:.12em;color:var(--accent-ink);font-weight:600;margin:0 0 .9rem}
+    h1{font-family:var(--serif);font-size:clamp(2.1rem,4vw,2.9rem);line-height:1.08;margin:0 0 .9rem;letter-spacing:-.01em}
+    .thesis{font-size:1.08rem;color:var(--ink-soft);max-width:62ch;margin:0}
+    section{margin-bottom:3.6rem;scroll-margin-top:2rem}
+    h2{font-family:var(--serif);font-size:1.55rem;margin:0 0 .3rem;display:flex;align-items:baseline;gap:.6rem}
+    h2 .idx{font-family:var(--mono);font-size:.85rem;color:var(--accent-ink)}
+    h3{font-family:var(--serif);font-size:1.15rem;margin:1.8rem 0 .6rem}
+    p{max-width:66ch}.section-lede{color:var(--ink-soft);font-size:.95rem;margin:0 0 1.3rem}
+    .callout{border-left:3px solid var(--accent);background:var(--paper);border-radius:0 var(--radius) var(--radius) 0;padding:1rem 1.2rem;margin:1.4rem 0}
+    .callout strong{display:block;margin-bottom:.2rem}
+    .flow{display:grid;gap:.55rem;margin:1.2rem 0}
+    .flow-step{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:.75rem 1rem;font-size:.9rem}
+    .flow-step+.flow-step::before{content:"↓";display:block;color:var(--accent);font-weight:700;margin:-1.35rem 0 .55rem .2rem}
+    .model-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin:1.4rem 0}
+    .model{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:1rem}
+    .model.recommended{border:2px solid var(--accent);position:relative}
+    .pill{display:inline-block;font-size:.64rem;text-transform:uppercase;letter-spacing:.07em;padding:.18rem .5rem;border-radius:999px;background:var(--gold-soft);color:var(--gold);font-weight:700;margin-bottom:.5rem}
+    .model h3{margin:.1rem 0 .45rem;font-family:var(--sans);font-size:.94rem}
+    .model p{font-size:.84rem;color:var(--ink-soft);margin:0}
+    .rule-list,.benefit-list{list-style:none;margin:1rem 0;padding:0;display:grid;gap:.6rem}
+    .rule-list li,.benefit-list li{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:.75rem 1rem;font-size:.9rem}
+    .rule-list strong{font-family:var(--mono);color:var(--accent-ink)}
+    .architecture{display:flex;align-items:center;justify-content:center;gap:.7rem;flex-wrap:wrap;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:1.3rem;margin:1.4rem 0;font-family:var(--mono);font-size:.83rem}
+    .architecture .node{padding:.55rem .8rem;border:1px solid var(--line-strong);border-radius:9px;background:var(--bg)}
+    .architecture .arrow{color:var(--accent);font-weight:700}
+    .timeline{list-style:none;margin:1.4rem 0 0;padding:0;border-left:2px solid var(--line-strong)}
+    .timeline li{position:relative;padding:0 0 1.5rem 1.6rem}
+    .timeline li::before{content:"";position:absolute;left:-6.5px;top:.3rem;width:11px;height:11px;border-radius:50%;background:var(--paper);border:2px solid var(--gold)}
+    .timeline strong{display:block;font-size:.95rem}.timeline span{font-size:.88rem;color:var(--ink-soft)}
+    footer{margin-top:4rem;padding-top:1.6rem;border-top:1px solid var(--line);font-size:.82rem;color:var(--ink-soft);display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+    @media(max-width:880px){
+      .shell{grid-template-columns:1fr}.mobile-bar{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.1rem;position:sticky;top:0;z-index:30;background:var(--bg);border-bottom:1px solid var(--line)}
+      .mobile-bar .brand{margin:0}.menu-btn{display:flex;flex-direction:column;justify-content:center;gap:4px;width:34px;height:34px;border-radius:9px;border:1px solid var(--line-strong);background:var(--paper)}
+      .menu-btn span{height:2px;margin:0 7px;background:var(--ink)}
+      nav.toc{display:block;position:fixed;top:0;left:0;height:100vh;width:min(78vw,300px);background:var(--bg);padding:1.4rem;transform:translateX(-100%);transition:transform .22s;z-index:50}
+      .drawer-backdrop{display:block;position:fixed;inset:0;background:rgba(8,18,17,.45);opacity:0;pointer-events:none;z-index:40}
+      .nav-toggle-input:checked~.shell nav.toc{transform:translateX(0)}.nav-toggle-input:checked~.shell .drawer-backdrop{opacity:1;pointer-events:auto}
+      main{padding:2.25rem 1.4rem 4rem}.model-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <input type="checkbox" id="nav-toggle" class="nav-toggle-input" aria-hidden="true">
+  <div class="shell">
+    <div class="mobile-bar">
+      <div class="brand"><div class="brand-mark">G</div><div class="brand-name">Glomm</div></div>
+      <label class="menu-btn" for="nav-toggle" aria-label="Abrir sumário" role="button"><span></span><span></span><span></span></label>
+    </div>
+    <label class="drawer-backdrop" for="nav-toggle" aria-hidden="true"></label>
+
+    <nav class="toc" aria-label="Sumário">
+      <div class="brand"><div class="brand-mark">G</div><div class="brand-name">Glomm</div></div>
+      <p class="brand-sub">Business &amp; Product Hub</p>
+      <div class="toc-status">Próximas decisões</div>
+      <ul class="toc-list">
+        <li><a href="#automaticas"><span class="num">01</span>Chamadas automáticas</a></li>
+        <li><a href="#gateway"><span class="num">02</span>Gateway próprio</a></li>
+        <li><a href="#sequencia"><span class="num">03</span>Ordem recomendada</a></li>
+      </ul>
+      <div class="toc-foot">Esta página reúne somente itens ainda não executados ou decisões futuras.</div>
+    </nav>
+
+    <main>
+      <nav class="pager" aria-label="Navegação entre páginas">
+        <a href="index.html"><span class="n">01</span> Business Plan</a>
+        <a href="page2.html"><span class="n">02</span> ← Testes &amp; Métricas</a>
+        <a href="page3.html" class="is-current"><span class="n">03</span> Roadmap</a>
+      </nav>
+
+      <header class="hero">
+        <p class="eyebrow">Roadmap · Próximas features</p>
+        <h1>Controle de custo antes da escala.</h1>
+        <p class="thesis">As próximas decisões técnicas do Glomm devem tornar cada nova chamada ao Google Places previsível, mensurável e proporcional à intenção do usuário.</p>
+      </header>
+
+      <section id="automaticas">
+        <h2><span class="idx">01</span>Chamadas automáticas</h2>
+        <p class="section-lede">Decidir quando o aplicativo pode gastar uma nova chamada do Nearby Search.</p>
+
+        <h3>Por que este ponto ainda precisa ser tratado</h3>
+        <div class="flow" aria-label="Fluxo atual de busca">
+          <div class="flow-step">O usuário toca em “Explorar” e inicia a busca principal.</div>
+          <div class="flow-step">Com menos de seis resultados, o app pode tentar uma categoria alternativa.</div>
+          <div class="flow-step">Se ainda houver poucos resultados, pode buscar novamente sem palavra-chave.</div>
+          <div class="flow-step">Uma expansão automática ainda pode solicitar outra página ou um raio maior.</div>
+        </div>
+        <p>Uma única ação pode, portanto, provocar até três chamadas antes da paginação. O encerramento por quota já está protegido: diante de HTTP 429, <code>OVER_QUERY_LIMIT</code>, acesso negado ou erro equivalente, o app interrompe a sequência, preserva resultados existentes e evita novas tentativas.</p>
+
+        <h3>Modelos em avaliação</h3>
+        <div class="model-grid">
+          <article class="model">
+            <h3>Modelo A — econômico</h3>
+            <p>“Explorar” permite exatamente uma chamada. Fallback, paginação e raio maior dependem de “Ver mais”.</p>
+          </article>
+          <article class="model recommended">
+            <span class="pill">Recomendado</span>
+            <h3>Modelo B — equilibrado</h3>
+            <p>Uma busca principal e somente um fallback se o resultado for zero. Qualquer expansão posterior depende de “Ver mais”.</p>
+          </article>
+          <article class="model">
+            <h3>Modelo C — atual</h3>
+            <p>Fallback abaixo de seis resultados, nova tentativa ampla e possível expansão automática. Maior cobertura, custo menos previsível.</p>
+          </article>
+        </div>
+
+        <div class="callout">
+          <strong>Regra financeira proposta — Modelo B</strong>
+          Busca normal: 1 chamada. Busca sem resultado: no máximo 2 chamadas. “Ver mais”: 1 nova chamada autorizada pelo usuário.
+        </div>
+
+        <h3>Critério de conclusão</h3>
+        <ul class="rule-list">
+          <li><strong>Busca inicial</strong> nunca expande automaticamente quando já existe ao menos um resultado.</li>
+          <li><strong>Resultado zero</strong> permite apenas um fallback automático.</li>
+          <li><strong>Ver mais</strong> passa a ser a única origem de paginação ou aumento de raio.</li>
+          <li><strong>Quota encerrada</strong> continua interrompendo toda a sequência sem descartar o que já foi encontrado.</li>
+        </ul>
+      </section>
+
+      <section id="gateway">
+        <h2><span class="idx">02</span>Gateway próprio</h2>
+        <p class="section-lede">Uma arquitetura futura para centralizar segurança, limites, reutilização de resultados e métricas.</p>
+
+        <div class="architecture" aria-label="Arquitetura futura">
+          <span class="node">Aplicativo</span><span class="arrow">→</span>
+          <span class="node">Gateway próprio</span><span class="arrow">→</span>
+          <span class="node">Google Places API</span>
+        </div>
+
+        <p>Hoje cada aparelho chama o Google diretamente, controla limites locais e registra o consumo depois da chamada. Com um gateway, o aplicativo enviaria localização, categoria e raio ao backend, que decidiria se a chamada é permitida, duplicada, reutilizável ou bloqueada pelo limite global.</p>
+
+        <h3>O que o gateway poderá controlar</h3>
+        <ul class="benefit-list">
+          <li>Limite global confiável — por exemplo, interromper o Nearby Search em 4.500 chamadas.</li>
+          <li>Limites diferentes para usuários gratuitos e Pro.</li>
+          <li>Deduplicação de buscas semelhantes entre usuários próximos.</li>
+          <li>Métricas centralizadas, paginação controlada e proteção contra abuso.</li>
+          <li>Chave do serviço web fora do aplicativo e desligamento seletivo do Nearby Search.</li>
+        </ul>
+
+        <div class="callout">
+          <strong>Potencial de economia</strong>
+          Se 100 usuários próximos fizerem a mesma busca, o acesso direto pode gerar até 100 chamadas. Um gateway poderia consultar o Google uma vez e reutilizar o resultado para os demais.
+        </div>
+
+        <h3>Por que permanece no roadmap</h3>
+        <p>O gateway também cria custo e operação: servidor, banco, tráfego, autenticação, proteção contra abuso e manutenção. Firebase Functions exigiria Blaze, mas não é uma obrigação arquitetural: outras infraestruturas poderão ser avaliadas quando os dados justificarem o investimento. Nada deste ponto será ativado agora.</p>
+      </section>
+
+      <section id="sequencia">
+        <h2><span class="idx">03</span>Ordem recomendada</h2>
+        <p class="section-lede">Reduzir desperdício primeiro; adicionar infraestrutura somente quando houver evidência.</p>
+        <ol class="timeline">
+          <li><strong>Aplicar o Modelo B</strong><span>Limitar as chamadas automáticas no próprio aplicativo.</span></li>
+          <li><strong>Publicar e observar</strong><span>Coletar métricas reais por algumas semanas.</span></li>
+          <li><strong>Medir a economia unitária</strong><span>Acompanhar chamadas por sessão, custo por usuário e efeito das restrições atuais.</span></li>
+          <li><strong>Reavaliar o gateway</strong><span>Implementar somente se volume, abuso, segurança ou crescimento justificarem a nova infraestrutura.</span></li>
+        </ol>
+      </section>
+
+      <footer>
+        <span>Glomm — Roadmap</span>
+        <span>Itens futuros · nenhum gateway ou plano Blaze ativado nesta etapa</span>
+      </footer>
+    </main>
+  </div>
+  <script>
+    document.querySelectorAll('nav.toc a').forEach(function(link){
+      link.addEventListener('click',function(){
+        var toggle=document.getElementById('nav-toggle');
+        if(toggle) toggle.checked=false;
+      });
+    });
+  </script>
+</body>
+</html>
