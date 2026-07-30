@@ -110,7 +110,8 @@
       <ul class="toc-list">
         <li><a href="#automaticas"><span class="num">01</span>Chamadas automáticas</a></li>
         <li><a href="#gateway"><span class="num">02</span>Gateway próprio</a></li>
-        <li><a href="#sequencia"><span class="num">03</span>Ordem recomendada</a></li>
+        <li><a href="#meta-events"><span class="num">03</span>Meta App Events</a></li>
+        <li><a href="#sequencia"><span class="num">04</span>Ordem recomendada</a></li>
       </ul>
       <div class="toc-foot">Esta página reúne somente itens ainda não executados ou decisões futuras.</div>
     </nav>
@@ -202,14 +203,56 @@
         <p>O gateway também cria custo e operação: servidor, banco, tráfego, autenticação, proteção contra abuso e manutenção. Firebase Functions exigiria Blaze, mas não é uma obrigação arquitetural: outras infraestruturas poderão ser avaliadas quando os dados justificarem o investimento. Nada deste ponto será ativado agora.</p>
       </section>
 
+      <section id="meta-events">
+        <h2><span class="idx">03</span>Meta App Events &amp; Conversions API</h2>
+        <p class="section-lede">Integração futura para transformar sinais de uso de alta qualidade em campanhas mais eficientes no Instagram e Facebook. Não será implementada nesta etapa.</p>
+
+        <div class="architecture" aria-label="Arquitetura futura dos eventos da Meta">
+          <span class="node">Eventos no aplicativo</span><span class="arrow">→</span>
+          <span class="node">Meta App Events</span><span class="arrow">+</span>
+          <span class="node">Eventos críticos no backend</span><span class="arrow">→</span>
+          <span class="node">Conversions API</span>
+        </div>
+
+        <h3>Sinais de alta qualidade planejados</h3>
+        <ul class="benefit-list">
+          <li><strong>Descoberta:</strong> busca por categoria, visualização de negócio e aplicação de filtro.</li>
+          <li><strong>Engajamento:</strong> salvar, compartilhar e abrir um negócio no Maps.</li>
+          <li><strong>Conversão:</strong> uso de cupom e assinatura do Glomm Pro.</li>
+          <li><strong>Alta intenção:</strong> sinal agregado para usuários com sequência consistente de ações relevantes, sem revelar o conteúdo detalhado dessas ações.</li>
+        </ul>
+
+        <h3>Como esses sinais poderão ser usados</h3>
+        <p>Os eventos deverão alimentar <strong>Públicos Personalizados</strong> e <strong>Públicos Semelhantes</strong> na Meta. O objetivo será criar campanhas para pessoas com perfil comportamental parecido com os usuários mais engajados do Glomm, além de medir quais anúncios geram descoberta, intenção e conversão reais — não apenas instalações.</p>
+
+        <div class="callout">
+          <strong>Privacidade como requisito de arquitetura</strong>
+          Não enviar buscas completas, localização precisa, dados sensíveis, coordenadas, nomes detalhados de locais visitados ou informações completas recebidas do Google Places. Os eventos deverão usar categorias amplas, identificadores internos mínimos e parâmetros estritamente necessários.
+        </div>
+
+        <h3>Pré-requisitos antes da implementação</h3>
+        <ul class="rule-list">
+          <li><strong>Consentimento</strong> definir a base de consentimento, a experiência de escolha e o comportamento quando o usuário não autorizar.</li>
+          <li><strong>Taxonomia</strong> documentar nomes, parâmetros, gatilhos, deduplicação e critérios do sinal de alta intenção.</li>
+          <li><strong>Deep links</strong> levar cada campanha à categoria, oferta ou experiência correta dentro do aplicativo.</li>
+          <li><strong>Mensuração</strong> estabelecer instalação, ativação, custo por ação, uso de cupom, assinatura Pro e retorno por campanha.</li>
+          <li><strong>Arquitetura híbrida</strong> usar o SDK para eventos adequados ao app e enviar eventos críticos pelo backend, com deduplicação e controle central.</li>
+          <li><strong>Governança</strong> revisar retenção, acesso, exclusão, documentação e conformidade antes de ativar qualquer compartilhamento de dados.</li>
+        </ul>
+
+        <h3>Critério para entrar em desenvolvimento</h3>
+        <p>A integração deverá ser priorizada somente depois que a taxonomia de eventos próprios estiver estável, o consentimento estiver definido e houver volume suficiente para avaliar campanhas. Até lá, permanece apenas como desenho de produto e aquisição futura.</p>
+      </section>
+
       <section id="sequencia">
-        <h2><span class="idx">03</span>Ordem recomendada</h2>
+        <h2><span class="idx">04</span>Ordem recomendada</h2>
         <p class="section-lede">Reduzir desperdício primeiro; adicionar infraestrutura somente quando houver evidência.</p>
         <ol class="timeline">
           <li><strong>Aplicar o Modelo B</strong><span>Limitar as chamadas automáticas no próprio aplicativo.</span></li>
           <li><strong>Publicar e observar</strong><span>Coletar métricas reais por algumas semanas.</span></li>
           <li><strong>Medir a economia unitária</strong><span>Acompanhar chamadas por sessão, custo por usuário e efeito das restrições atuais.</span></li>
           <li><strong>Reavaliar o gateway</strong><span>Implementar somente se volume, abuso, segurança ou crescimento justificarem a nova infraestrutura.</span></li>
+          <li><strong>Preparar aquisição com a Meta</strong><span>Estabilizar consentimento e eventos próprios antes de integrar App Events, Conversions API, públicos e campanhas.</span></li>
         </ol>
       </section>
 
